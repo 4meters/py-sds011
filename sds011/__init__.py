@@ -39,6 +39,10 @@ class SDS011(object):
                  use_query_mode=True):
         """Initialise and open serial port.
         """
+        self.port = serial_port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        self.use_query_mode = use_query_mode
         self.ser = serial.Serial(port=serial_port,
                                  baudrate=baudrate,
                                  timeout=timeout)
@@ -47,6 +51,16 @@ class SDS011(object):
 
     def __del__(self):
         self.ser.close()
+
+    def close(self):
+        self.ser.close()
+
+    def open(self):
+        self.ser = serial.Serial(port=self.serial_port,
+                                 baudrate=self.baudrate,
+                                 timeout=self.timeout)
+        self.ser.flush()
+        self.set_report_mode(active=not self.use_query_mode)
 
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
