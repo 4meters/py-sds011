@@ -52,11 +52,11 @@ class SDS011(object):
     def __del__(self):
         self.ser.close()
 
-    def close(self):
+    def close_serial(self):
         self.ser.close()
 
-    def open(self):
-        self.ser = serial.Serial(port=self.serial_port,
+    def open_serial(self):
+        self.ser = serial.Serial(port=self.port,
                                  baudrate=self.baudrate,
                                  timeout=self.timeout)
         self.ser.flush()
