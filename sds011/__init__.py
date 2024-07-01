@@ -45,6 +45,9 @@ class SDS011(object):
         self.ser.flush()
         self.set_report_mode(active=not use_query_mode)
 
+    def __del__(self):
+        self.ser.close()
+
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
         """
