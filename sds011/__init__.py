@@ -50,7 +50,18 @@ class SDS011(object):
         self.set_report_mode(active=not use_query_mode)
 
     def __del__(self):
-        self.ser.close()
+        try:
+            if not self.is_serial_open():
+                self.open_serial()
+                self.sleep()
+            self.ser.close()
+        except serial.SerialException as e:
+            print("Serial Exception when destructing SDS011 class")
+        except Exception as e:
+            print("Exception when destructing SDS011 class")
+
+    def is_serial_open(self):
+        return self.ser.isOpen()
 
     def close_serial(self):
         self.ser.close()
@@ -65,10 +76,14 @@ class SDS011(object):
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
         """
+        if not self.is_serial_open():
+            self.open_serial()
         self.ser.write(cmd_bytes)
 
     def _get_reply(self):
         """Read reply from device."""
+        if not self.is_serial_open():
+            self.open_serial()
         raw = self.ser.read(size=10)
         data = raw[2:8]
         if len(data) == 0:
@@ -180,6 +195,9 @@ class SDS011(object):
         @return: PM2.5 and PM10 concetration in micrograms per cude meter.
         @rtype: tuple(float, float) - first is PM2.5.
         """
+        if not self.is_serial_open():
+            self.open_serial()
+
         byte = 0
         while byte != self.HEAD:
             byte = self.ser.read(size=1)
