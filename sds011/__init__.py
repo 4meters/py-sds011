@@ -109,7 +109,6 @@ class SDS011(object):
                 + b"\x00" * 10)
         cmd = self._finish_cmd(cmd)
         self._execute(cmd)
-        self._get_reply()
         raw = self._get_reply()
         if raw is None:
             return None
@@ -149,7 +148,6 @@ class SDS011(object):
                 + b"\x00" * 10)
         cmd = self._finish_cmd(cmd)
         self._execute(cmd)
-        self._get_reply()
         raw = self._get_reply()
         if raw is None:
             return None
