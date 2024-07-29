@@ -128,6 +128,10 @@ class SDS011(object):
         @return: Air particulate density in micrograms per cubic meter.
         @rtype: tuple(float, float) -> (PM2.5, PM10)
         """
+        if self.use_query_mode == 0:
+            print("SDS011 is in active reporting mode, use read()")
+            return None
+
         cmd = self.cmd_begin()
         cmd += (self.QUERY_CMD
                 + b"\x00" * 12)
@@ -136,8 +140,6 @@ class SDS011(object):
 
         raw = self._get_reply()
         if raw is None:
-            if self.use_query_mode == 0:
-                print("SDS011 is in active reporting mode, use read()")
             return None
         data = struct.unpack('<HH', raw[2:6])
         pm25 = data[0] / 10.0
@@ -214,6 +216,10 @@ class SDS011(object):
         @return: PM2.5 and PM10 concetration in micrograms per cude meter.
         @rtype: tuple(float, float) - first is PM2.5.
         """
+        if self.use_query_mode is True:
+            print("SDS011 is in query reporting mode, use query()")
+            return None
+
         if not self.is_serial_open():
             self.open_serial()
 
@@ -223,8 +229,6 @@ class SDS011(object):
             d = self.ser.read(size=10)
             if d[0:1] == b"\xc0":
                 data = self._process_frame(byte + d)
-                if data is None and self.use_query_mode is True:
-                    print("SDS011 is in query reporting mode, use query()")
                 return data
 
     def check_firmware_version(self):
