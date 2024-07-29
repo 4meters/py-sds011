@@ -114,7 +114,7 @@ class SDS011(object):
         if raw is None:
             return None
         data = struct.unpack('B', raw[4:5])
-        return data[0] # passive(query) 1, active reporting 0
+        return data, "SSSS", data[0] # passive(query) 1, active reporting 0
 
     def query(self):
         """Query the device and read the data.
