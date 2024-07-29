@@ -47,7 +47,7 @@ class SDS011(object):
                                  baudrate=baudrate,
                                  timeout=timeout)
         self.ser.flush()
-        self.sleep(sleep=False)
+        #self.sleep(sleep=False)
         self.set_report_mode(query=use_query_mode)
 
     def __del__(self):
