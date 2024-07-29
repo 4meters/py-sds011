@@ -115,6 +115,7 @@ class SDS011(object):
                 + (self.PASSIVE if query else self.ACTIVE)
                 + b"\x00" * 10)
         cmd = self._finish_cmd(cmd)
+        print(cmd)
         self._execute(cmd)
         raw = self._get_reply()
         if raw is None:
@@ -213,7 +214,7 @@ class SDS011(object):
     def read(self):
         """Read sensor data - only used in active reporting mode.
 
-        @return: PM2.5 and PM10 concetration in micrograms per cude meter.
+        @return: PM2.5 and PM10 concentration in micrograms per cude meter.
         @rtype: tuple(float, float) - first is PM2.5.
         """
         if self.use_query_mode is True:
@@ -233,7 +234,7 @@ class SDS011(object):
 
     def check_firmware_version(self):
         """
-        @return: Current firwmware version, YEAR-MONTH-DAY
+        @return: Current firmware version, YEAR-MONTH-DAY
         @rtype: string
         """
         cmd = self.cmd_begin()
