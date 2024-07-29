@@ -110,6 +110,11 @@ class SDS011(object):
         cmd = self._finish_cmd(cmd)
         self._execute(cmd)
         self._get_reply()
+        raw = self._get_reply()
+        if raw is None:
+            return None
+        data = struct.unpack('B', raw[4:5])
+        return data # TODO check answer
 
     def query(self):
         """Query the device and read the data.
@@ -145,6 +150,11 @@ class SDS011(object):
         cmd = self._finish_cmd(cmd)
         self._execute(cmd)
         self._get_reply()
+        raw = self._get_reply()
+        if raw is None:
+            return None
+        data = struct.unpack('B', raw[4:5]) #1=work, 0=sleep
+        return data
 
     def set_work_period(self, read=False, work_time=0):
         """Get work period command. Does not contain checksum and tail.
