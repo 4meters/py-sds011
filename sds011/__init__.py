@@ -47,7 +47,8 @@ class SDS011(object):
                                  baudrate=baudrate,
                                  timeout=timeout)
         self.ser.flush()
-        #self.sleep(sleep=False)
+        self.is_in_sleep_mode = False
+        self.sleep(sleep=False)
         self.set_report_mode(query=use_query_mode)
 
     def __del__(self):
@@ -162,7 +163,7 @@ class SDS011(object):
         if raw is None:
             return 0
         data = struct.unpack('B', raw[4:5][0:2])
-        return data[0] # 1=work, 0=sleep
+        return not data[0] # 0=work, 1=sleep
 
     def set_work_period(self, read=False, work_time=0):
         """Get work period command. Does not contain checksum and tail.
