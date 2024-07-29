@@ -103,8 +103,11 @@ class SDS011(object):
         return self.HEAD + self.CMD_ID
 
     def set_report_mode(self, read=False, query=True):
-        """Get sleep command. Does not contain checksum and tail.
-        @rtype: list
+        """Set/Get report mode command.
+        @param read: Get report mode when True, Set when False
+        @type read: bool
+        @param query: When True query mode, when false active reporting mode
+        @type query: bool
         """
         if not read:
             self.use_query_mode = query
@@ -169,7 +172,7 @@ class SDS011(object):
         return not data[0] # 0=work, 1=sleep
 
     def set_work_period(self, read=False, work_time=0):
-        """Get work period command. Does not contain checksum and tail.
+        """Get work period command.
         @rtype: list
         """
         assert work_time >= 0 and work_time <= 30
