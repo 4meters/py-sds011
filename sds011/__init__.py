@@ -47,7 +47,7 @@ class SDS011(object):
                                  baudrate=baudrate,
                                  timeout=timeout)
         self.ser.flush()
-        self.set_report_mode(active=not use_query_mode)
+        self.set_report_mode(query=use_query_mode)
 
     def __del__(self):
         try:
@@ -71,7 +71,7 @@ class SDS011(object):
                                  baudrate=self.baudrate,
                                  timeout=self.timeout)
         self.ser.flush()
-        self.set_report_mode(active=not self.use_query_mode)
+        self.set_report_mode(query=self.use_query_mode)
 
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
@@ -98,14 +98,15 @@ class SDS011(object):
         """
         return self.HEAD + self.CMD_ID
 
-    def set_report_mode(self, read=False, active=False):
+    def set_report_mode(self, read=False, query=True):
         """Get sleep command. Does not contain checksum and tail.
         @rtype: list
         """
+        self.use_query_mode = query
         cmd = self.cmd_begin()
         cmd += (self.REPORT_MODE_CMD
                 + (self.READ if read else self.WRITE)
-                + (self.ACTIVE if active else self.PASSIVE)
+                + (self.PASSIVE if query else self.ACTIVE)
                 + b"\x00" * 10)
         cmd = self._finish_cmd(cmd)
         self._execute(cmd)
@@ -113,7 +114,7 @@ class SDS011(object):
         if raw is None:
             return None
         data = struct.unpack('B', raw[4:5])
-        return data[0] # TODO check answer
+        return raw # passive(query) 1, active reporting 0
 
     def query(self):
         """Query the device and read the data.
@@ -129,7 +130,9 @@ class SDS011(object):
 
         raw = self._get_reply()
         if raw is None:
-            return None  #TODO:
+            if self.use_query_mode == 0:
+                print("SDS011 is in active reporting mode, use read()")
+            return None
         data = struct.unpack('<HH', raw[2:6])
         pm25 = data[0] / 10.0
         pm10 = data[1] / 10.0
@@ -150,7 +153,7 @@ class SDS011(object):
         self._execute(cmd)
         raw = self._get_reply()
         if raw is None:
-            return None
+            return 0
         data = struct.unpack('B', raw[4:5]) #1=work, 0=sleep
         return data[0]
 
@@ -212,6 +215,8 @@ class SDS011(object):
             d = self.ser.read(size=10)
             if d[0:1] == b"\xc0":
                 data = self._process_frame(byte + d)
+                if data is None and self.use_query_mode is True:
+                    print("SDS011 is in query reporting mode, use query()")
                 return data
 
     def check_firmware_version(self):
