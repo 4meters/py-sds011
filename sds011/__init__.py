@@ -54,7 +54,8 @@ class SDS011(object):
         try:
             if not self.is_serial_open():
                 self.open_serial()
-            self.sleep()
+            if not self.is_in_sleep_mode:
+                self.sleep()
             self.ser.close()
         except serial.SerialException as e:
             print("Serial Exception when destructing SDS011 class")
@@ -148,6 +149,8 @@ class SDS011(object):
         @param sleep: Whether the device should sleep or work.
         @type sleep: bool
         """
+        if not read:
+            self.is_in_sleep_mode = sleep
         cmd = self.cmd_begin()
         cmd += (self.SLEEP_CMD
                 + (self.READ if read else self.WRITE)
