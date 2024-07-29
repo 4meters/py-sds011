@@ -86,6 +86,7 @@ class SDS011(object):
         """Read reply from device."""
         if not self.is_serial_open():
             self.open_serial()
+        self.ser.flush()
         raw = self.ser.read(size=10)
         data = raw[2:8]
         if len(data) == 0:
