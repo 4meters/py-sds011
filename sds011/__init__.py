@@ -47,6 +47,7 @@ class SDS011(object):
                                  baudrate=baudrate,
                                  timeout=timeout)
         self.ser.flush()
+        self.sleep(sleep=False)
         self.set_report_mode(query=use_query_mode)
 
     def __del__(self):
@@ -71,6 +72,7 @@ class SDS011(object):
                                  baudrate=self.baudrate,
                                  timeout=self.timeout)
         self.ser.flush()
+        self.sleep(sleep=False)
         self.set_report_mode(query=self.use_query_mode)
 
     def _execute(self, cmd_bytes):
@@ -114,7 +116,7 @@ class SDS011(object):
         if raw is None:
             return None
         data = struct.unpack('B', raw[4:5])
-        return data, "SSSS", data[0] # passive(query) 1, active reporting 0
+        return raw, "SSSS", data[0] # passive(query) 1, active reporting 0
 
     def query(self):
         """Query the device and read the data.
@@ -155,7 +157,7 @@ class SDS011(object):
         if raw is None:
             return 0
         data = struct.unpack('B', raw[4:5]) #1=work, 0=sleep
-        return data[0]
+        return raw, "SSSS", data[0]
 
     def set_work_period(self, read=False, work_time=0):
         """Get work period command. Does not contain checksum and tail.
