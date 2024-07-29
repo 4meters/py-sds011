@@ -115,7 +115,7 @@ class SDS011(object):
         raw = self._get_reply()
         if raw is None:
             return None
-        data = struct.unpack('B', raw[4:5])
+        data = struct.unpack('B', raw[4:5][0:2])
         return raw, "SSSS", data[0] # passive(query) 1, active reporting 0
 
     def query(self):
