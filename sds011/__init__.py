@@ -113,7 +113,7 @@ class SDS011(object):
         if raw is None:
             return None
         data = struct.unpack('B', raw[4:5])
-        return data # TODO check answer
+        return data[0] # TODO check answer
 
     def query(self):
         """Query the device and read the data.
@@ -152,7 +152,7 @@ class SDS011(object):
         if raw is None:
             return None
         data = struct.unpack('B', raw[4:5]) #1=work, 0=sleep
-        return data
+        return data[0]
 
     def set_work_period(self, read=False, work_time=0):
         """Get work period command. Does not contain checksum and tail.
