@@ -190,7 +190,7 @@ class SDS011(object):
         return (pm25, pm10)
 
     def read(self):
-        """Read sensor data.
+        """Read sensor data - only used in active reporting mode.
 
         @return: PM2.5 and PM10 concetration in micrograms per cude meter.
         @rtype: tuple(float, float) - first is PM2.5.
